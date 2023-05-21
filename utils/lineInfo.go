@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"fmt"
 	"runtime"
+	"strconv"
+	"strings"
 )
 
 // LineInfo 返回调用此函数的代码所在函数、文件、行号
@@ -14,6 +15,7 @@ func LineInfo() string {
 		line = 0
 	}
 	function = runtime.FuncForPC(pc).Name()
-	return fmt.Sprintf(" -> %s():%s:%d", function, file, line)
-	//return fmt.Sprintf(" -> %s:%d", file, line)
+
+	return strings.Join(ConcatStrings(" -> ", function, file, strconv.Itoa(line)), ":")
+	//return fmt.Sprintf(" -> %s():%s:%d", function, file, line)
 }

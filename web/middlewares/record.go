@@ -3,20 +3,22 @@ package middlewares
 import (
 	"bytes"
 	"io"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dafsic/go-pkgs/mxlog"
+	"github.com/dafsic/go-pkgs/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type responseLogWriter struct {
 	gin.ResponseWriter
-	responseBody *bytes.Buffer
+	responseBuffer *bytes.Buffer
 }
 
 func (w responseLogWriter) Write(b []byte) (int, error) {
-	w.responseBody.Write(b)
+	w.responseBuffer.Write(b)
 	return w.ResponseWriter.Write(b)
 }
 
@@ -27,34 +29,34 @@ func Record(l *mxlog.Logger) gin.HandlerFunc {
 
 		urlPath := ctx.Request.URL.Path
 		raw := ctx.Request.URL.RawQuery
-		method := ctx.Request.Method
-		clientIP := ctx.ClientIP()
-		ctx.Set("cip", clientIP)
-		bodyBytes, _ := io.ReadAll(ctx.Request.Body)
-
 		if raw != "" {
 			urlPath = urlPath + "?" + raw
 		}
 
-		ctx.Set("body", bodyBytes)
-		blw := responseLogWriter{responseBody: bytes.NewBufferString(""), ResponseWriter: ctx.Writer}
+		src := ctx.ClientIP()
+		ctx.Set("src", src)
+
+		requestBody, _ := io.ReadAll(ctx.Request.Body)
+		ctx.Set("body", requestBody)
+
+		blw := responseLogWriter{responseBuffer: bytes.NewBufferString(""), ResponseWriter: ctx.Writer}
 		ctx.Writer = &blw //接口赋值要用地址
 
 		ctx.Next()
 
+		// 服务端结果返回
 		end := time.Now()
-		latency := end.Sub(start)
+		status := ctx.Writer.Status()
 
-		statusCode := ctx.Writer.Status()
-
-		l.Infof("|%d|%v|%s|%s|%s|%s|%s\n",
-			statusCode,
-			latency,
-			clientIP,
-			method,
+		elems := utils.ConcatStrings(strconv.Itoa(status),
+			end.Sub(start).String(),
+			src,
+			ctx.Request.Method,
 			urlPath,
-			strings.ReplaceAll(string(bodyBytes), "\n", ""),
-			blw.responseBody.Bytes(),
+			strings.ReplaceAll(string(requestBody), "\n", ""),
+			blw.responseBuffer.String(),
 		)
+
+		l.Info(strings.Join(elems, "|"))
 	}
 }

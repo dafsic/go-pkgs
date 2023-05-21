@@ -34,4 +34,3 @@ type Body struct {
 	Data UserResult `json:"data"`
 	Msg  string     `json:"msg"`
 }
-
