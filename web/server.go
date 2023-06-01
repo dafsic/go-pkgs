@@ -15,8 +15,14 @@ import (
 )
 
 type Cfg struct {
+	Mode    string // release/debug/test
 	Addr    string // 192.168.1.100:8080
 	AuthCfg auth.Cfg
+}
+
+func (c *Cfg) Default() {
+	c.Mode = "release"
+	c.Addr = "127.0.0.1:8080"
 }
 
 type Server interface {
@@ -31,10 +37,24 @@ type ServerImpl struct {
 	authenticator auth.Authenticator
 }
 
-func NewServer(lc fx.Lifecycle, cfg config.Config, log mxlog.Loggers) Server {
-	c := cfg.GetElem("server").(Cfg)
+type Params struct {
+	fx.In
+
+	Lc     fx.Lifecycle
+	Config config.Config `name:"config"`
+	Log    mxlog.Loggers `name:"mxlog"`
+}
+
+type Result struct {
+	fx.Out
+
+	Server Server `name:"web_server"`
+}
+
+func NewServer(p Params) Result {
+	c := p.Config.GetItem("server").(Cfg)
 	impl := ServerImpl{
-		l:          log.GetLogger("http"),
+		l:          p.Log.GetLogger("http"),
 		listenAddr: c.Addr,
 	}
 	impl.authenticator = auth.NewAuthenticator(c.AuthCfg)
@@ -52,7 +72,7 @@ func NewServer(lc fx.Lifecycle, cfg config.Config, log mxlog.Loggers) Server {
 		Handler:      impl.gin,
 	}
 
-	lc.Append(fx.Hook{
+	p.Lc.Append(fx.Hook{
 		// app.start调用
 		OnStart: func(ctx context.Context) error {
 			// 这里不能阻塞
@@ -70,7 +90,7 @@ func NewServer(lc fx.Lifecycle, cfg config.Config, log mxlog.Loggers) Server {
 		},
 	})
 
-	return &impl
+	return Result{Server: &impl}
 }
 
 func (s *ServerImpl) RegisterHandler(method, path string, h gin.HandlerFunc) {
@@ -84,7 +104,7 @@ func (s *ServerImpl) RegisterHandler(method, path string, h gin.HandlerFunc) {
 	case "DELETE":
 		s.gin.DELETE(path, h)
 	default:
-		//TODO: return error
+		// TODO: return error
 	}
 }
 

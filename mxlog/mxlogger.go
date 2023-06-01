@@ -14,6 +14,10 @@ type Cfg struct {
 	Level string
 }
 
+func (c *Cfg) Default() {
+	c.Level = "info"
+}
+
 type Loggers interface {
 	GetLogger(name string) *Logger
 }
@@ -23,6 +27,18 @@ type LoggersImpl struct {
 	lvl     string
 	output  io.Writer
 	loggers map[string]*Logger
+}
+
+type Params struct {
+	fx.In
+
+	Config config.Config `name:"config"`
+}
+
+type Result struct {
+	fx.Out
+
+	Logs Loggers `name:"mxlog"`
 }
 
 func (l *LoggersImpl) GetLogger(name string) *Logger {
@@ -36,15 +52,15 @@ func (l *LoggersImpl) GetLogger(name string) *Logger {
 	return i
 }
 
-func NewLoggers(c config.Config) Loggers {
-	cfg := c.GetElem("mxlog").(Cfg)
+func NewLoggers(p Params) Result {
+	cfg := p.Config.GetItem("mxlog").(Cfg)
 	t := &LoggersImpl{
 		output:  os.Stdout,
 		lvl:     cfg.Level,
 		loggers: make(map[string]*Logger, 8),
 	}
 
-	return t
+	return Result{Logs: t}
 }
 
 var Module = fx.Options(fx.Provide(NewLoggers))

@@ -20,6 +20,13 @@ type Cfg struct {
 	Enable bool
 }
 
+func (c *Cfg) Default() {
+	c.AuthServerUrl = "http://192.168.1.100/base/checkAuth"
+	c.Name = ""
+	c.Excludes = make([]string, 0)
+	c.Enable = true
+}
+
 type Authenticator interface {
 	Interceptor(ctx *gin.Context)
 }

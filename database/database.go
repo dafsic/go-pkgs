@@ -20,7 +20,11 @@ type Cfg struct {
 	DBName   string
 }
 
-func (c Cfg) DSN() string {
+func (c *Cfg) Default() {
+
+}
+
+func (c *Cfg) DSN() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai", c.Host, c.Username, c.Password, c.DBName, c.Port)
 }
 
@@ -33,14 +37,28 @@ type DatabaseImpl struct {
 	l  *mxlog.Logger
 }
 
-func NewDatabase(lc fx.Lifecycle, log mxlog.Loggers, cfg config.Config) Database {
-	c := cfg.GetElem("database").(Cfg)
+type Params struct {
+	fx.In
+
+	Lc     fx.Lifecycle
+	Log    mxlog.Loggers `name:"mxlog"`
+	Config config.Config `name:"config"`
+}
+
+type Result struct {
+	fx.Out
+
+	Database Database
+}
+
+func NewDatabase(p Params) Result {
+	c := p.Config.GetItem("database").(Cfg)
 
 	impl := &DatabaseImpl{
-		l: log.GetLogger("databse"),
+		l: p.Log.GetLogger("databse"),
 	}
 
-	lc.Append(fx.Hook{
+	p.Lc.Append(fx.Hook{
 		// app.start调用
 		OnStart: func(ctx context.Context) error {
 			// 这里不能阻塞
@@ -58,7 +76,7 @@ func NewDatabase(lc fx.Lifecycle, log mxlog.Loggers, cfg config.Config) Database
 		},
 	})
 
-	return impl
+	return Result{Database: impl}
 }
 
 func (impl DatabaseImpl) DB() *gorm.DB {
