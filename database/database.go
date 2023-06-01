@@ -83,4 +83,4 @@ func (impl DatabaseImpl) DB() *gorm.DB {
 	return impl.db
 }
 
-var StoreModule = fx.Options(fx.Provide(NewDatabase))
+var Module = fx.Options(fx.Provide(NewDatabase))

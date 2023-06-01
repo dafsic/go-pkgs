@@ -109,4 +109,4 @@ func (s *ServerImpl) RegisterHandler(method, path string, h gin.HandlerFunc) {
 }
 
 // Module for fx
-var ServerModule = fx.Options(fx.Provide(NewServer))
+var Module = fx.Options(fx.Provide(NewServer))
