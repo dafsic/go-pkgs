@@ -11,13 +11,13 @@ import (
 
 type Cfg struct {
 	// 认证服务的接口, eg,http://192.168.1.100/base/checkAuth
-	AuthServerUrl string
+	AuthServerUrl string `toml:"auth_server_url"`
 	// 请求认证服务的应用的名称，即本应用的名称
-	Name string
+	Name string `toml:"name"`
 	// Excludes 不进行 token 校验。优先级：低
-	Excludes []string
+	Excludes []string `toml:"excludes"`
 	// enable true: 使用 Interceptor 规则; false: 不使用 Interceptor 规则, 全部路由进行 token 校验
-	Enable bool
+	Enable bool `toml:"enable"`
 }
 
 func (c *Cfg) Default() {

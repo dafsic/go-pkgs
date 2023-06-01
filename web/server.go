@@ -15,9 +15,9 @@ import (
 )
 
 type Cfg struct {
-	Mode    string // release/debug/test
-	Addr    string // 192.168.1.100:8080
-	AuthCfg auth.Cfg
+	Mode string   `toml:"mode"` // release/debug/test
+	Addr string   `toml:"addr"` // 192.168.1.100:8080
+	Auth auth.Cfg `toml:"auth"`
 }
 
 func (c *Cfg) Default() {
@@ -57,7 +57,7 @@ func NewServer(p Params) Result {
 		l:          p.Log.GetLogger("http"),
 		listenAddr: c.Addr,
 	}
-	impl.authenticator = auth.NewAuthenticator(c.AuthCfg)
+	impl.authenticator = auth.NewAuthenticator(c.Auth)
 	impl.l.Info("Init...")
 
 	impl.gin = gin.New()

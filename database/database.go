@@ -13,11 +13,11 @@ import (
 )
 
 type Cfg struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	DBName   string
+	Host     string `toml:"host"`
+	Port     int    `toml:"port"`
+	Username string `toml:"user_name"`
+	Password string `toml:"password"`
+	DBName   string `toml:"db_name"`
 }
 
 func (c *Cfg) Default() {

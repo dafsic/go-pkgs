@@ -11,7 +11,7 @@ import (
 )
 
 type Cfg struct {
-	Level string
+	Level string `toml:"level"`
 }
 
 func (c *Cfg) Default() {
