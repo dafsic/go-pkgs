@@ -10,10 +10,10 @@ type Config interface {
 	SetItem(k string, v interface{})
 }
 
-func GetItem(conf interface{}, e string) interface{} {
+func GetItem(conf *interface{}, e string) interface{} {
 	var cfg interface{}
-	rt := reflect.TypeOf(conf)
-	rv := reflect.ValueOf(conf)
+	rt := reflect.TypeOf(*conf)
+	rv := reflect.ValueOf(*conf)
 
 	fieldNum := rt.NumField()
 	for i := 0; i < fieldNum; i++ {
@@ -27,7 +27,7 @@ func GetItem(conf interface{}, e string) interface{} {
 
 // TODO: 待测试
 // SetItem 设置conf中字段名字为k的值为v
-func SetItem(conf interface{}, k string, v interface{}) {
+func SetItem(conf *interface{}, k string, v interface{}) {
 	rt := reflect.TypeOf(conf)
 	rv := reflect.ValueOf(conf).Elem()
 
