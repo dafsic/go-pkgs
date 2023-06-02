@@ -12,6 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const ModuleName = "database"
+
 type Cfg struct {
 	Host     string `toml:"host"`
 	Port     int    `toml:"port"`
@@ -52,10 +54,10 @@ type Result struct {
 }
 
 func NewDatabase(p Params) Result {
-	c := p.Config.GetItem("database").(Cfg)
+	c := p.Config.GetItem(ModuleName).(Cfg)
 
 	impl := &DatabaseImpl{
-		l: p.Log.GetLogger("databse"),
+		l: p.Log.GetLogger(ModuleName),
 	}
 
 	p.Lc.Append(fx.Hook{

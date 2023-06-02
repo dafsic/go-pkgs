@@ -10,6 +10,8 @@ import (
 	"go.uber.org/fx"
 )
 
+const ModuleName = "mxlog"
+
 type Cfg struct {
 	Level string `toml:"level"`
 }
@@ -53,7 +55,7 @@ func (l *LoggersImpl) GetLogger(name string) *Logger {
 }
 
 func NewLoggers(p Params) Result {
-	cfg := p.Config.GetItem("mxlog").(Cfg)
+	cfg := p.Config.GetItem(ModuleName).(Cfg)
 	t := &LoggersImpl{
 		output:  os.Stdout,
 		lvl:     cfg.Level,

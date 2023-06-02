@@ -14,6 +14,8 @@ import (
 	"go.uber.org/fx"
 )
 
+const ModuleName = "web"
+
 type Cfg struct {
 	Mode string   `toml:"mode"` // release/debug/test
 	Addr string   `toml:"addr"` // 192.168.1.100:8080
@@ -52,9 +54,9 @@ type Result struct {
 }
 
 func NewServer(p Params) Result {
-	c := p.Config.GetItem("server").(Cfg)
+	c := p.Config.GetItem(ModuleName).(Cfg)
 	impl := ServerImpl{
-		l:          p.Log.GetLogger("http"),
+		l:          p.Log.GetLogger(ModuleName),
 		listenAddr: c.Addr,
 	}
 	impl.authenticator = auth.NewAuthenticator(c.Auth)
