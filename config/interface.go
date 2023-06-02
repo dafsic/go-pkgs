@@ -27,7 +27,7 @@ func GetItem(conf interface{}, e string) interface{} {
 
 // TODO: 待测试
 // SetItem 设置conf中字段名字为k的值为v
-func SetItem(conf *interface{}, k string, v interface{}) {
+func SetItem(conf interface{}, k string, v interface{}) {
 	rt := reflect.TypeOf(conf).Elem()
 	rv := reflect.ValueOf(conf).Elem()
 
