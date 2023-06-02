@@ -32,7 +32,7 @@ type LoggersImpl struct {
 type Params struct {
 	fx.In
 
-	Config config.Config `name:"config"`
+	Config config.Config
 }
 
 type Result struct {

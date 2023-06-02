@@ -41,8 +41,8 @@ type Params struct {
 	fx.In
 
 	Lc     fx.Lifecycle
-	Log    mxlog.Loggers `name:"mxlog"`
-	Config config.Config `name:"config"`
+	Log    mxlog.Loggers
+	Config config.Config
 }
 
 type Result struct {

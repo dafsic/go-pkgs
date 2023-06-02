@@ -41,14 +41,14 @@ type Params struct {
 	fx.In
 
 	Lc     fx.Lifecycle
-	Config config.Config `name:"config"`
-	Log    mxlog.Loggers `name:"mxlog"`
+	Config config.Config
+	Log    mxlog.Loggers
 }
 
 type Result struct {
 	fx.Out
 
-	Server Server `name:"web_server"`
+	Server Server
 }
 
 func NewServer(p Params) Result {
@@ -63,6 +63,7 @@ func NewServer(p Params) Result {
 	impl.gin = gin.New()
 	impl.gin.Use(middlewares.Record(impl.l))
 	impl.gin.Use(middlewares.Cors())
+	impl.gin.Use(impl.authenticator.Interceptor)
 
 	impl.srv = &http.Server{
 		Addr:         impl.listenAddr,
