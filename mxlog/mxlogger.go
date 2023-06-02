@@ -38,7 +38,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	Logs Loggers `name:"mxlog"`
+	Logs Loggers
 }
 
 func (l *LoggersImpl) GetLogger(name string) *Logger {
