@@ -17,7 +17,7 @@ func (c *Cfg) Default() {
 }
 
 type Database interface {
-	DB() *gorm.DB
+	Inst() *gorm.DB
 }
 
 type DatabaseImpl struct {

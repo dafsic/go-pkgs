@@ -55,7 +55,7 @@ func NewPostgresDatabase(p Params) Result {
 	return Result{Database: impl}
 }
 
-func (impl DatabaseImpl) DB() *gorm.DB {
+func (impl DatabaseImpl) Inst() *gorm.DB {
 	return impl.db
 }
 
