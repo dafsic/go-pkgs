@@ -22,7 +22,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	Database Database `name:"postgresql"`
+	Database Database `name:"postgres"`
 }
 
 func NewPostgresDatabase(p Params) Result {
