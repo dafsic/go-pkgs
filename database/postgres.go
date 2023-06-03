@@ -38,7 +38,7 @@ func NewPostgresDatabase(p Params) Result {
 			// 这里不能阻塞
 			var err error
 			impl.db, err = gorm.Open(postgres.New(postgres.Config{
-				DSN:                  c.DSN(),
+				DSN:                  c.DSN,
 				PreferSimpleProtocol: true, // disables implicit prepared statement usage
 			}), &gorm.Config{
 				Logger: logger.Default.LogMode(logger.Silent),
